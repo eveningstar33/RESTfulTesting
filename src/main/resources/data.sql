@@ -1,3 +1,3 @@
-insert into item values (1001, 'Item1', 10, 20);
-insert into item values (1002, 'Item2', 5, 10);
-insert into item values (1003, 'Item3', 8, 15);
+insert into item values (1001, 'Pen', 15, 20);
+insert into item values (1002, 'Notebook', 10, 40);
+insert into item values (1003, 'Pencil', 5, 15);
