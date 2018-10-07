@@ -16,6 +16,10 @@ public class Item {
 	@Transient    // The value field will not be stored in the database
 	private int value;
 	
+	protected Item() {
+		
+	}
+	
 	public Item(int id, String name, int price, int quantity) {
 		this.id = id;
 		this.name = name;

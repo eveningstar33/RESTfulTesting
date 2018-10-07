@@ -3,6 +3,9 @@ package com.dgs.restfultesting.controller;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 import org.junit.Test;
@@ -76,4 +79,28 @@ public class ItemControllerTest {
 		itemFromBusinessService() method. So we need to create a mock for the business service and Spring Boot helps us with @MockBean.
 		*/ 
 	}
+	
+	/*
+	We write an unit test for Web Layer - Controller. Even though the controller is talking to a Business Layer which is
+	talking to the database, the controller is talking to a mock of the busines service. So it doesn't really matter to it
+	that the business service is talking to the database. So the fact that the business service is talking to the database 
+	does not affect the unit test. 
+	*/
+	
+	@Test
+	public void retrieveAllItems_basic() throws Exception {
+				
+		when(businessService.retrieveAllItems()).thenReturn(
+				Arrays.asList(new Item(2, "iPhone", 1000, 10),
+						new Item(3, "Huawei", 500, 17)));
+				
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/all-items-from-database") 
+				.accept(MediaType.APPLICATION_JSON); 
+		
+		MvcResult result = mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(content().json("[{id:2, name:iPhone, price:1000}, {id:3, name:Huawei, price:500}]"))  // This will return an array back, so this data should be within an array
+				.andReturn();  
+	}	
 }
