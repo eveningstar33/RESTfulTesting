@@ -1,6 +1,7 @@
 package com.dgs.restfultesting.business;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,5 +28,21 @@ public class ItemBusinessService {
 		}
 		
 		return items;  
+	}
+	
+	public Item retrieveAnItem(int id) {
+		
+		Optional<Item> optionalItem = repository.findById(id);
+		Item item = optionalItem.get();
+		
+		return item;
+	}
+	
+	public Item addAnItem(Item item) {
+		
+	    repository.save(item);
+		item.setValue(item.getPrice() * item.getQuantity()); 
+
+		return item; 
 	}
 }

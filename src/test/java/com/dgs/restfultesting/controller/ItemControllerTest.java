@@ -1,5 +1,6 @@
 package com.dgs.restfultesting.controller;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -7,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,7 +97,7 @@ public class ItemControllerTest {
 						new Item(3, "Huawei", 500, 17)));
 				
 		RequestBuilder request = MockMvcRequestBuilders
-				.get("/all-items-from-database") 
+				.get("/items") 
 				.accept(MediaType.APPLICATION_JSON); 
 		
 		MvcResult result = mockMvc.perform(request)
@@ -103,4 +105,35 @@ public class ItemControllerTest {
 				.andExpect(content().json("[{id:2, name:iPhone, price:1000}, {id:3, name:Huawei, price:500}]"))  // This will return an array back, so this data should be within an array
 				.andReturn();  
 	}	
+	
+	@Test
+	public void retrieveAnItem_basic() throws Exception {
+				
+		when(businessService.retrieveAnItem(1002)).thenReturn(
+				new Item(1002, "Notebook", 10, 40));
+				
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/items/1002") 
+				.accept(MediaType.APPLICATION_JSON); 
+		
+		MvcResult result = mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(content().json("{id:1002, name:Notebook, price:10}")) 
+				.andReturn();  
+	}
+	
+	@Test
+	public void createItem() throws Exception {
+				
+		RequestBuilder request = MockMvcRequestBuilders
+				.post("/items")
+				.accept(MediaType.APPLICATION_JSON)
+				.content("{\"id\":1,\"name\":\"Book\",\"price\":10,\"quantity\":100}")
+				.contentType(MediaType.APPLICATION_JSON);
+		
+		MvcResult result = mockMvc.perform(request)
+				.andExpect(status().isCreated())
+				.andExpect(header().string("location", containsString("/item/")))
+				.andReturn();
+	}
 }
