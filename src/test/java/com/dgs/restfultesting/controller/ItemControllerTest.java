@@ -2,8 +2,12 @@ package com.dgs.restfultesting.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 
 import java.util.Arrays;
 
@@ -123,17 +127,49 @@ public class ItemControllerTest {
 	}
 	
 	@Test
-	public void createItem() throws Exception {
-				
+	public void addItem_basic() throws Exception {
+		
+        when(businessService.addAnItem(anyString(), anyInt(), anyInt())).thenReturn(new Item(1, "Book", 10, 100));
+        
 		RequestBuilder request = MockMvcRequestBuilders
 				.post("/items")
 				.accept(MediaType.APPLICATION_JSON)
 				.content("{\"id\":1,\"name\":\"Book\",\"price\":10,\"quantity\":100}")
 				.contentType(MediaType.APPLICATION_JSON);
-		
+		 
 		MvcResult result = mockMvc.perform(request)
 				.andExpect(status().isCreated())
-				.andExpect(header().string("location", containsString("/item/")))
+				.andExpect(header().string("location", containsString("/item/1")))
 				.andReturn();
+		
+		verify(businessService, times(1)).addAnItem("Book", 10, 100); 
 	}
+	
+    @Test
+    public void testRetrieveAllItems_ServiceLayer(){
+
+        businessService.retrieveAllItems();
+        
+        verify(businessService, times(1)).retrieveAllItems();
+    }
+    
+    @Test
+    public void testRetrieveAllItems_WebLayer() throws Exception { 
+    	    	
+    	when(businessService.retrieveAllItems()).thenReturn(				
+    			Arrays.asList(new Item(1001, "Pen", 15, 20),
+						new Item(1002, "Notebook", 100, 40),
+						new Item(1003, "Pencil", 5, 15)));
+    	
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/items") 
+				.accept(MediaType.APPLICATION_JSON);
+		
+		MvcResult result = mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(content().json("[{id:1001, name:Pen, price:15}, {id:1002, name:Notebook, price:100}, {id:1003, name:Pencil, price:5}]"))
+				.andReturn();  
+
+        verify(businessService, times(1)).retrieveAllItems();
+    }
 }

@@ -27,16 +27,21 @@ public class ItemController {
 
 	@GetMapping("/dummy-item")
 	public Item dummyItem() {
+		
 		return new Item(1, "Book", 10, 100);
 	}
 	
 	@GetMapping("/item-from-business-service")
 	public Item itemFromBusinessService() {
-		return businessService.retrieveHardcodedItem();
+		
+		Item item = businessService.retrieveHardcodedItem();
+				
+		return item;
 	}
 	
 	@GetMapping("/items")
 	public List<Item> retrieveAllItems() {
+										
 		return businessService.retrieveAllItems(); 
 	}
 	
@@ -47,14 +52,18 @@ public class ItemController {
 	
 	@PostMapping("/items")
 	public ResponseEntity<Object> addItem(@RequestBody Item item) {
-		Item savedItem = businessService.addAnItem(item); 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance();
-        
-        UriComponents uriComponents =
-                uriComponentsBuilder.path("/item/").buildAndExpand("/item/");
-        httpHeaders.setLocation(uriComponents.toUri());
-                        
-		return new ResponseEntity<>(savedItem, httpHeaders, HttpStatus.CREATED); 
+				
+		Item savedItem = businessService.addAnItem(item.getName(), item.getPrice(), item.getQuantity()); 
+         
+		if (savedItem == null) {
+			return ResponseEntity.noContent().build();
+		}
+		
+		URI location = ServletUriComponentsBuilder
+				.fromCurrentRequest()
+				.path("/item/{id}")
+				.buildAndExpand(savedItem.getId()).toUri();
+                                
+		return ResponseEntity.created(location).build(); 
 	}
 }

@@ -1,6 +1,7 @@
 package com.dgs.restfultesting.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
@@ -8,6 +9,7 @@ import javax.persistence.Transient;
 public class Item {
 
 	@Id
+	@GeneratedValue
 	private int id;
 	private String name;
 	private int price;
@@ -16,8 +18,14 @@ public class Item {
 	@Transient    // The value field will not be stored in the database
 	private int value;
 	
-	protected Item() {
+	public Item() {
 		
+	}
+	
+	public Item(String name, int price, int quantity) {
+		this.name = name;
+		this.price = price;
+		this.quantity = quantity;
 	}
 	
 	public Item(int id, String name, int price, int quantity) {

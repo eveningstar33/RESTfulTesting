@@ -20,9 +20,9 @@ public class ItemBusinessService {
 	}
 	
 	public List<Item> retrieveAllItems() {
-		
+						
 		List<Item> items = repository.findAll(); 
-		
+				
 		for (Item item : items) {
 			item.setValue(item.getPrice() * item.getQuantity());  
 		}
@@ -38,9 +38,12 @@ public class ItemBusinessService {
 		return item;
 	}
 	
-	public Item addAnItem(Item item) {
+	public Item addAnItem(String name, int price, int quantity) {
 		
+		Item item = new Item(name, price, quantity);
+				
 	    repository.save(item);
+	    
 		item.setValue(item.getPrice() * item.getQuantity()); 
 
 		return item; 
