@@ -48,4 +48,8 @@ public class ItemBusinessService {
 
 		return item; 
 	}
+	
+	public void deleteAnItem(int id) {
+		repository.deleteById(id); 
+	}
 }

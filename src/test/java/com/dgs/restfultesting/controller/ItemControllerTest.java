@@ -172,4 +172,19 @@ public class ItemControllerTest {
 
         verify(businessService, times(1)).retrieveAllItems();
     }
+    
+    @Test
+    public void testDeleteAnItem_basic() throws Exception {
+    	
+    	RequestBuilder request = MockMvcRequestBuilders
+    			.delete("/items/1")
+    			.contentType(MediaType.APPLICATION_JSON)
+    			.accept(MediaType.APPLICATION_JSON);
+    	
+    	MvcResult result = mockMvc.perform(request)
+    			.andExpect(status().isOk())
+    			.andReturn(); 
+    	
+    	verify(businessService, times(1)).deleteAnItem(1); 
+    }
 }
