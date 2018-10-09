@@ -52,4 +52,13 @@ public class ItemBusinessService {
 	public void deleteAnItem(int id) {
 		repository.deleteById(id); 
 	}
+	
+	public Item updateAnItem(int id, String name, int price, int quantity) {
+		
+		Item item = new Item(id, name, price, quantity);
+		repository.save(item);
+		item.setValue(item.getPrice() * item.getQuantity()); 
+		
+		return item;
+	}
 }

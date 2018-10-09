@@ -187,4 +187,22 @@ public class ItemControllerTest {
     	
     	verify(businessService, times(1)).deleteAnItem(1); 
     }
+    
+	@Test
+	public void updateItem_basic() throws Exception {
+		
+        when(businessService.updateAnItem(anyInt(), anyString(), anyInt(), anyInt())).thenReturn(new Item(1, "Book", 13, 99));
+        
+		RequestBuilder request = MockMvcRequestBuilders
+				.put("/items")
+				.accept(MediaType.APPLICATION_JSON)
+				.content("{\"id\":1,\"name\":\"Book\",\"price\":13,\"quantity\":99}")
+				.contentType(MediaType.APPLICATION_JSON);
+		 
+		MvcResult result = mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andReturn();
+		
+		verify(businessService, times(1)).updateAnItem(1, "Book", 13, 99); 
+	}
 }
